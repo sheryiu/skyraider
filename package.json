@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "serve:ssr:skyraider": "node dist/skyraider/server/server.mjs",
-    "deploy": "ng deploy skyraider --base-href=/skyraider/"
+    "deploy": "ng deploy skyraider --dry-run --base-href=/skyraider/ --repo=https://github.com/sheryiu/skyraider.git"
   },
   "private": true,
   "dependencies": {
