@@ -3,12 +3,14 @@ import { Chess, Color, PieceSymbol, Square } from 'chess.js';
 import { ModelLoaderService } from '../core/model-loader.service';
 import { ThreeJsContainerComponent } from '../three-js-container/three-js-container.component';
 import { ChessBoardSquareComponent } from './chess-board-square/chess-board-square.component';
+import { ChessCameraHelperComponent } from './chess-camera-helper/chess-camera-helper.component';
 import { ChessCameraComponent } from './chess-camera/chess-camera.component';
 import { ChessControlsComponent } from './chess-controls/chess-controls.component';
+import { ChessLightHelperComponent } from './chess-light-helper/chess-light-helper.component';
 import { ChessLightComponent } from './chess-light/chess-light.component';
 import { ChessPieceComponent } from './chess-piece/chess-piece.component';
 import { ChessSceneComponent } from './chess-scene/chess-scene.component';
-import { GameControllerComponent } from './game-controller/game-controller.component';
+import { GameControllerService } from './game-controller.service';
 import { RaycastBoxComponent } from './raycast-box/raycast-box.component';
 
 export function fileToInt(file: string) {
@@ -23,7 +25,6 @@ export function rankToInt(rank: string) {
   standalone: true,
   imports: [
     ThreeJsContainerComponent,
-    GameControllerComponent,
     ChessSceneComponent,
     ChessCameraComponent,
     ChessPieceComponent,
@@ -31,29 +32,19 @@ export function rankToInt(rank: string) {
     ChessControlsComponent,
     RaycastBoxComponent,
     ChessBoardSquareComponent,
+    ChessLightHelperComponent,
+    ChessCameraHelperComponent,
   ],
+  providers: [GameControllerService],
   templateUrl: './game.component.html',
 })
 export class GameComponent {
   private loader = inject(ModelLoaderService);
   isLoading = this.loader.isLoading;
 
-  private chess = new Chess();
-  pieces = this.chess.board().flat().filter((square): square is {
-    square: Square;
-    type: PieceSymbol;
-    color: Color;
-  } => square != null)
-  board = Array(8).fill(97).map((_file: number, i) => {
-    const file = String.fromCharCode(_file + i)
-    return Array(8).fill(49).map((_rank: number, i) => {
-      const rank = String.fromCharCode(_rank + i)
-      return (file + rank) as Square;
-    }).map(square => ({
-      square,
-      color: this.chess.squareColor(square)
-    }))
-  })
+  private gameController = inject(GameControllerService);
+  pieces = this.gameController.pieces;
+  board = this.gameController.board;
 
   constructor() {
     afterNextRender(() => {

@@ -23,6 +23,7 @@ export class RaycastBoxComponent implements GameObject {
   private zone = inject(NgZone);
   init(renderer: WebGLRenderer, canvas: HTMLCanvasElement): void {
     this.object3D = new BoxHelper(new Object3D());
+    this.object3D.visible = false;
     this.zone.runOutsideAngular(() => {
       canvas.addEventListener('pointermove', (event) => {
         this.mousePosition.x = (event.clientX / window.innerWidth) * 2 - 1;

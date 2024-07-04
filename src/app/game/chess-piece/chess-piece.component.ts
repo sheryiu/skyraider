@@ -1,8 +1,9 @@
 import { Component, computed, inject, input } from '@angular/core';
-import { Chess, Color, PieceSymbol, Square } from 'chess.js';
-import { Object3D, Object3DEventMap, WebGLRenderer } from 'three';
+import { Color, PieceSymbol, Square } from 'chess.js';
+import { Mesh, Object3D, Object3DEventMap, WebGLRenderer } from 'three';
 import { ModelLoaderService } from '../../core/model-loader.service';
-import { GameObject, provideAsGameObject, sizeOfObject } from '../../three-js-container/three-js';
+import { GameObject, provideAsGameObject } from '../../three-js-container/three-js';
+import { GameControllerService } from '../game-controller.service';
 import { fileToInt, rankToInt } from '../game.component';
 
 /**
@@ -53,6 +54,7 @@ export class ChessPieceComponent implements GameObject {
   private file = computed(() => this.square().at(0)!)
   private rank = computed(() => this.square().at(1)!)
   private loader = inject(ModelLoaderService);
+  private gameController = inject(GameControllerService);
 
   init(renderer: WebGLRenderer, canvas: HTMLCanvasElement): void {
     this.object3D = this.loader.getModel('chessPieces')()?.scene.getObjectByName(this.modelName())?.clone(true)!;
@@ -61,12 +63,16 @@ export class ChessPieceComponent implements GameObject {
     } else {
       this.object3D.rotateY(-Math.PI / 2)
     }
-    this.object3D.traverse(child => {
-      child.castShadow = true;
+    this.object3D.traverse(node => {
+      if (node instanceof Mesh) {
+        node.castShadow = true;
+      }
     })
-    this.object3D.castShadow = true;
-    console.log(this.object3D)
-    // console.log(sizeOfObject(this.object3D))
     this.object3D.position.set(fileToInt(this.file()) * 4 - 16 + 2, 0, rankToInt(this.rank()) * 4 - 16 + 2)
+  }
+
+  onPointerdown(event: PointerEvent) {
+    this.gameController.selectPiece(this.square());
+    return true;
   }
 }

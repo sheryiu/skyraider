@@ -23,5 +23,7 @@ export class ChessControlsComponent implements GameObject {
     controls.update();
     controls.enablePan = false;
     controls.enableDamping = false;
+    controls.minPolarAngle = Math.PI * 0.1;
+    controls.maxPolarAngle = Math.PI * 0.4;
   }
 }

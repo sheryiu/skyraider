@@ -11,6 +11,7 @@ export interface GameObject {
   object3D?: Object3D;
   init?(renderer: WebGLRenderer, canvas: HTMLCanvasElement): void;
   animate?(time: DOMHighResTimeStamp, frame: XRFrame, renderer: WebGLRenderer, canvas: HTMLCanvasElement): void;
+  onPointerdown?(event: PointerEvent): boolean | undefined | void;
 }
 
 @Component({
@@ -35,7 +36,6 @@ export abstract class SceneGameObject implements GameObject {
           gameObject.init?.(this._renderer!, this._canvas!);
           gameObject.initialized = true;
           if (gameObject.object3D && !scene.children.includes(gameObject.object3D)) {
-            console.log(gameObject.object3D)
             scene.add(gameObject.object3D)
           }
         })

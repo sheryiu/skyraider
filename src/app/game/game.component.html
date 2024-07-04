@@ -1,6 +1,7 @@
 @if (!isLoading()) {
   <app-three-js-container [currentCamera]="camera" [currentScene]="scene">
-    <app-game-controller></app-game-controller>
+    <app-chess-camera #camera></app-chess-camera>
+    <app-chess-controls [currentCamera]="camera"></app-chess-controls>
     <app-chess-scene #scene>
       @for (file of board; track $index) {
         @for (square of file; track $index) {
@@ -11,9 +12,9 @@
         <app-chess-piece [color]="piece.color" [square]="piece.square" [piece]="piece.type"></app-chess-piece>
       }
       <app-raycast-box [currentCamera]="camera" [currentScene]="scene"></app-raycast-box>
-      <app-chess-light></app-chess-light>
+      <app-chess-light #light></app-chess-light>
+      <app-chess-light-helper [light]="light"></app-chess-light-helper>
+      <app-chess-camera-helper [camera]="light"></app-chess-camera-helper>
     </app-chess-scene>
-    <app-chess-camera #camera></app-chess-camera>
-    <app-chess-controls [currentCamera]="camera"></app-chess-controls>
   </app-three-js-container>
 }
