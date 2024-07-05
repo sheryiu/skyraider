@@ -1,4 +1,4 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, effect, inject, input } from '@angular/core';
 import { Chess, Square } from 'chess.js';
 import { BoxGeometry, Color, Mesh, MeshPhongMaterial, Object3D, Object3DEventMap, WebGLRenderer } from 'three';
 import { GameObject, provideAsGameObject } from '../../three-js-container/three-js';
@@ -33,9 +33,16 @@ export class ChessBoardSquareComponent implements GameObject {
     this.object3D.receiveShadow = true;
   }
 
+  onPointerdown(event: PointerEvent): boolean | undefined | void {
+    this.gameController.selectSquare(this.square());
+    return true;
+  }
+
   animate(time: DOMHighResTimeStamp, frame: XRFrame, renderer: WebGLRenderer, canvas: HTMLCanvasElement): void {
     if (this.gameController.selectedSquare == this.square()) {
       this.material!.color = new Color(0x77400d)
+    } else if (this.gameController.validMovesToSquare.includes(this.square())) {
+      this.material!.color = new Color(this.color() == 'dark' ? 0x388906 : 0x5b9515)
     } else {
       this.material!.color = new Color(this.color() == 'dark' ? 0x222222 : 0xDDDDDD)
     }
