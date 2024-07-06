@@ -29,12 +29,17 @@ export class ChessBoardSquareComponent implements GameObject {
     const geometry = new BoxGeometry(4, 1, 4);
     this.material = new MeshPhongMaterial({ color: this.color() == 'dark' ? 0x222222 : 0xDDDDDD });
     this.object3D = new Mesh(geometry, this.material);
-    this.object3D.position.set(fileToInt(this.file()) * 4 - 16 + 2, -1.1, rankToInt(this.rank()) * 4 - 16 + 2)
+    this.object3D.position.set(-fileToInt(this.file()) * 4 + 16 - 2, -1.1, rankToInt(this.rank()) * 4 - 16 + 2)
     this.object3D.receiveShadow = true;
   }
 
   onPointerdown(event: PointerEvent): boolean | undefined | void {
-    this.gameController.selectSquare(this.square());
+    if (!this.gameController.isInteractable) return;
+    if (this.gameController.validMovesToSquare.includes(this.square()) && this.gameController.selectedSquare) {
+      this.gameController.move(this.gameController.selectedSquare, this.square())
+    } else {
+      this.gameController.selectSquare(this.square());
+    }
     return true;
   }
 
@@ -44,7 +49,7 @@ export class ChessBoardSquareComponent implements GameObject {
     } else if (this.gameController.validMovesToSquare.includes(this.square())) {
       this.material!.color = new Color(this.color() == 'dark' ? 0x388906 : 0x5b9515)
     } else {
-      this.material!.color = new Color(this.color() == 'dark' ? 0x222222 : 0xDDDDDD)
+      this.material!.color = new Color(this.color() == 'dark' ? 0x444444 : 0xDDDDDD)
     }
   }
 }

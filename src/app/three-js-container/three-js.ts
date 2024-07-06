@@ -1,5 +1,5 @@
 import { Component, InjectionToken, Injector, Provider, Type, afterNextRender, contentChildren, effect, forwardRef, inject, signal } from '@angular/core';
-import { Box3, Camera, Object3D, Scene, Vector3, WebGLRenderer } from 'three';
+import { Box3, Camera, Object3D, Object3DEventMap, Scene, Vector3, WebGLRenderer } from 'three';
 
 export function sizeOfObject(object: Object3D) {
   const box = new Box3().setFromObject(object);
@@ -27,6 +27,7 @@ export abstract class SceneGameObject implements GameObject {
   private _canvas?: HTMLCanvasElement;
   private _scene = signal<Scene | undefined>(undefined)
   constructor() {
+    const gameObjectsInScene = new Set<GameObject>();
     afterNextRender(() => {
       effect(() => {
         const scene = this._scene();
@@ -37,7 +38,14 @@ export abstract class SceneGameObject implements GameObject {
           gameObject.initialized = true;
           if (gameObject.object3D && !scene.children.includes(gameObject.object3D)) {
             scene.add(gameObject.object3D)
+            gameObjectsInScene.add(gameObject)
           }
+        })
+        gameObjectsInScene.forEach(gameObject => {
+          if (this.gameObjects().includes(gameObject)) return;
+          // TODO add remove animation
+          scene.remove(gameObject.object3D!)
+          gameObjectsInScene.delete(gameObject)
         })
       }, { injector: this.injector, allowSignalWrites: true })
     })
@@ -57,6 +65,7 @@ export abstract class SceneGameObject implements GameObject {
 
 export abstract class CameraGameObject implements GameObject {
   initialized: boolean = false;
+  object3D?: Object3D<Object3DEventMap> | undefined;
   camera?: Camera;
 }
 

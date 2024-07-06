@@ -6,11 +6,6 @@ import { GameObject, provideAsGameObject } from '../../three-js-container/three-
 import { GameControllerService } from '../game-controller.service';
 import { fileToInt, rankToInt } from '../game.component';
 
-enum State {
-  INITIAL,
-  SELECTED,
-}
-
 /**
  * ['Chess_Bishop_Black_0', 'Chess_King_Black_1', 'Chess_Knight_Black_2', 'Chess_Pawn_Black_3', 'Chess_Queen_Black_4', 'Chess_Rook_Black_5', 'Chess_Bishop_White_6', 'Chess_King_White_7', 'Chess_Knight_White_8', 'Chess_Pawn_White_9', 'Chess_Queen_White_10', 'Chess_Rook_White_11']
  */
@@ -30,6 +25,7 @@ export class ChessPieceComponent implements GameObject {
   color = input.required<Color>();
   piece = input.required<PieceSymbol>();
   square = input.required<Square>();
+  isSelected = input.required<boolean>();
   private modelName = computed(() => {
     switch (this.color()) {
       case 'w': {
@@ -60,16 +56,23 @@ export class ChessPieceComponent implements GameObject {
   private rank = computed(() => this.square().at(1)!)
   private loader = inject(ModelLoaderService);
   private gameController = inject(GameControllerService);
-  private state: State = State.INITIAL;
   private targetPosition = new Vector3();
   private stateChangedAt: DOMHighResTimeStamp = 0;
+  private lastAnimationFrameAt: DOMHighResTimeStamp = 0;
 
   constructor() {
     effect(() => {
       const file = this.file();
       const rank = this.rank();
       if (!this.initialized) return;
-      this.targetPosition.set(fileToInt(file) * 4 - 16 + 2, 0, rankToInt(rank) * 4 - 16 + 2)
+      this.targetPosition.set(-fileToInt(this.file()) * 4 + 16 - 2, 0, rankToInt(rank) * 4 - 16 + 2)
+      this.stateChangedAt = this.lastAnimationFrameAt;
+    })
+    effect(() => {
+      const isSelected = this.isSelected();
+      if (!this.initialized) return;
+      this.targetPosition.y = isSelected ? 1 : 0;
+      this.stateChangedAt = this.lastAnimationFrameAt;
     })
   }
 
@@ -85,29 +88,18 @@ export class ChessPieceComponent implements GameObject {
         node.castShadow = true;
       }
     })
-    this.targetPosition.set(fileToInt(this.file()) * 4 - 16 + 2, 0, rankToInt(this.rank()) * 4 - 16 + 2)
+    this.targetPosition.set(-fileToInt(this.file()) * 4 + 16 - 2, 0, rankToInt(this.rank()) * 4 - 16 + 2)
     this.object3D.position.copy(this.targetPosition)
   }
 
   onPointerdown(event: PointerEvent) {
+    if (!this.gameController.isInteractable) return;
     this.gameController.selectSquare(this.square());
     return true;
   }
 
   animate(time: DOMHighResTimeStamp, frame: XRFrame, renderer: WebGLRenderer, canvas: HTMLCanvasElement): void {
-    const newState = this.newState();
-    if (this.state != newState) {
-      this.stateChangedAt = time;
-      this.state = newState;
-      switch (this.state) {
-        case State.INITIAL:
-          this.targetPosition.y = 0;
-          break;
-        case State.SELECTED:
-          this.targetPosition.y = 1;
-          break;
-      }
-    }
+    this.lastAnimationFrameAt = time;
     if (!this.targetPosition.equals(this.object3D!.position)) {
       const animationMs = 500; // this should be changed depending on which animation is playing
       this.object3D!.position.lerp(this.targetPosition, Math.min(1, (time - this.stateChangedAt) / animationMs))
@@ -115,14 +107,6 @@ export class ChessPieceComponent implements GameObject {
       if (Math.abs(diff.x) < 0.0001) this.object3D?.position.setX(this.targetPosition.x);
       if (Math.abs(diff.y) < 0.0001) this.object3D?.position.setY(this.targetPosition.y);
       if (Math.abs(diff.z) < 0.0001) this.object3D?.position.setZ(this.targetPosition.z);
-    }
-  }
-
-  private newState() {
-    if (this.gameController.selectedSquare == this.square()) {
-      return State.SELECTED;
-    } else {
-      return State.INITIAL;
     }
   }
 }

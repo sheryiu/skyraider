@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { DirectionalLight, WebGLRenderer } from 'three';
-import { GameObject, provideAsGameObject } from '../../three-js-container/three-js';
+import { CameraGameObject, GameObject, provideAsGameObject } from '../../three-js-container/three-js';
 
 @Component({
   selector: 'app-chess-light',
@@ -13,6 +13,8 @@ import { GameObject, provideAsGameObject } from '../../three-js-container/three-
 export class ChessLightComponent implements GameObject {
   initialized: boolean = false;
   object3D?: DirectionalLight;
+  camera = input.required<CameraGameObject>();
+
   init(renderer: WebGLRenderer, canvas: HTMLCanvasElement): void {
     this.object3D = new DirectionalLight(0xffffff, 3)
     this.object3D.position.set(32, 40, 32)
@@ -25,5 +27,11 @@ export class ChessLightComponent implements GameObject {
     this.object3D.shadow.camera.bottom = -distance;
     this.object3D.shadow.camera.right = distance;
     this.object3D.shadow.camera.left = -distance;
+  }
+
+  animate(time: DOMHighResTimeStamp, frame: XRFrame, renderer: WebGLRenderer, canvas: HTMLCanvasElement): void {
+    if (this.camera().initialized) {
+      this.object3D?.position.copy(this.camera().camera!.position)
+    }
   }
 }

@@ -12,6 +12,7 @@ import { ChessPieceComponent } from './chess-piece/chess-piece.component';
 import { ChessSceneComponent } from './chess-scene/chess-scene.component';
 import { GameControllerService } from './game-controller.service';
 import { RaycastBoxComponent } from './raycast-box/raycast-box.component';
+import { UiLayerComponent } from './ui-layer/ui-layer.component';
 
 export function fileToInt(file: string) {
   return file.charCodeAt(0) - 97;
@@ -34,6 +35,7 @@ export function rankToInt(rank: string) {
     ChessBoardSquareComponent,
     ChessLightHelperComponent,
     ChessCameraHelperComponent,
+    UiLayerComponent,
   ],
   providers: [GameControllerService],
   templateUrl: './game.component.html',
