@@ -1,5 +1,6 @@
 import { effect, Injectable, signal } from '@angular/core';
 import { Chess, Color, DEFAULT_POSITION, Move, PieceSymbol, ROOK, Square, SQUARES, WHITE } from 'chess.js';
+import { Subject } from 'rxjs';
 
 function addRank(square: Square, rankDiff: number): Square {
   const [file, rank] = square.split('');
@@ -52,6 +53,8 @@ export class GameControllerService {
 
   state = signal(GameState.Initial, { equal: () => false });
 
+  onMove = new Subject<Move>();
+
   constructor() {
     effect(() => {
       switch (this.state()) {
@@ -79,9 +82,9 @@ export class GameControllerService {
     }, { allowSignalWrites: true })
   }
 
-  startGame() {
+  startGame(fen?: string) {
     if (this.state() != GameState.Initial) throw new Error('Invalid State');
-    this.chess.load(DEFAULT_POSITION)
+    this.chess.load(fen ?? DEFAULT_POSITION)
     this.initializePiecesLocation();
     this.result.set({
       isCheckmate: this.chess.isCheckmate(),
@@ -93,10 +96,19 @@ export class GameControllerService {
     this.state.set(GameState.Game);
   }
 
-  move(from: Square, to: Square) {
+  getFen() {
+    return this.chess.fen();
+  }
+
+  move(options: { from?: Square, to?: Square, san?: string }) {
     if (this.state() != GameState.Game) throw new Error('Invalid State');
-    const move = this.chess.move({ from, to });
+    const move = (options.from && options.to)
+      ? this.chess.move({ from: options.from, to: options.to })
+      : options.san
+      ? this.chess.move(options.san)
+      : this.chess.move('');
     this.updatePiecesLocation(move);
+    this.onMove.next(move);
     this.selectedSquare = null;
     this.validMovesToSquare = [];
     this.state.set(GameState.Game);

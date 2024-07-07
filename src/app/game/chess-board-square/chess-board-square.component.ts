@@ -36,7 +36,7 @@ export class ChessBoardSquareComponent implements GameObject {
   onPointerdown(event: PointerEvent): boolean | undefined | void {
     if (!this.gameController.isInteractable) return;
     if (this.gameController.validMovesToSquare.includes(this.square()) && this.gameController.selectedSquare) {
-      this.gameController.move(this.gameController.selectedSquare, this.square())
+      this.gameController.move({ from: this.gameController.selectedSquare, to: this.square()})
     } else {
       this.gameController.selectSquare(this.square());
     }

@@ -19,9 +19,10 @@ export class ThreeJsContainerComponent {
     const canvas = this.canvas()?.nativeElement;
     if (!canvas || !(canvas instanceof HTMLCanvasElement) || !window) return undefined;
     const renderer = new WebGLRenderer({
+      antialias: true,
       canvas,
     });
-    renderer.setPixelRatio(window.devicePixelRatio);
+    // renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = PCFSoftShadowMap;

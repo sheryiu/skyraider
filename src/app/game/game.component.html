@@ -1,4 +1,4 @@
-<div class="relative">
+<div class="relative overflow-hidden">
   @if (!isLoading()) {
     <app-three-js-container [currentCamera]="camera" [currentScene]="scene">
       <app-chess-camera #camera></app-chess-camera>
@@ -18,4 +18,5 @@
     </app-three-js-container>
     <app-ui-layer></app-ui-layer>
   }
+  <router-outlet></router-outlet>
 </div>

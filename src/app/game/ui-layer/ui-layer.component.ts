@@ -1,5 +1,6 @@
 import { NgClass } from '@angular/common';
 import { Component, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { GameControllerService, GameState } from '../game-controller.service';
 import { ResultLayerComponent } from './result-layer/result-layer.component';
 
@@ -9,6 +10,7 @@ import { ResultLayerComponent } from './result-layer/result-layer.component';
   imports: [
     NgClass,
     ResultLayerComponent,
+    RouterLink,
   ],
   templateUrl: './ui-layer.component.html'
 })

@@ -6,6 +6,7 @@
     <div class="h-full flex items-center justify-center flex-col gap-4">
       <h1>Chess</h1>
       <button class="text-xl font-medium pointer-events-auto" (click)="onStartGameClick()">Start Game</button>
+      <button class="text-xl font-medium pointer-events-auto" [routerLink]="['host-game']">Host Game</button>
     </div>
   } @else if (this.gameState() == gameStates.Result) {
     <app-result-layer></app-result-layer>

@@ -1,6 +1,8 @@
 import { Component, afterNextRender, inject } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 import { Chess, Color, PieceSymbol, Square } from 'chess.js';
 import { ModelLoaderService } from '../core/model-loader.service';
+import { MultiplayerService } from '../core/multiplayer.service';
 import { ThreeJsContainerComponent } from '../three-js-container/three-js-container.component';
 import { ChessBoardSquareComponent } from './chess-board-square/chess-board-square.component';
 import { ChessCameraHelperComponent } from './chess-camera-helper/chess-camera-helper.component';
@@ -25,6 +27,7 @@ export function rankToInt(rank: string) {
   selector: 'app-game',
   standalone: true,
   imports: [
+    RouterOutlet,
     ThreeJsContainerComponent,
     ChessSceneComponent,
     ChessCameraComponent,
@@ -37,7 +40,7 @@ export function rankToInt(rank: string) {
     ChessCameraHelperComponent,
     UiLayerComponent,
   ],
-  providers: [GameControllerService],
+  providers: [GameControllerService, MultiplayerService],
   templateUrl: './game.component.html',
 })
 export class GameComponent {
