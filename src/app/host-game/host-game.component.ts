@@ -1,5 +1,5 @@
 import { isPlatformServer } from '@angular/common';
-import { Component, inject, PLATFORM_ID, signal } from '@angular/core';
+import { Component, inject, isDevMode, PLATFORM_ID, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { MultiplayerService } from '../core/multiplayer.service';
@@ -16,7 +16,11 @@ import { GameControllerService } from '../game/game-controller.service';
   <div class="absolute inset-0 backdrop-blur-sm bg-black/10 flex items-center justify-center">
     <div class="flex items-center justify-center flex-col max-w-screen-md w-4/12 bg-white/40 rounded-2xl p-6 gap-4">
       <p class="text-xl font-medium">Send this URL to your friend</p>
-      <p class="truncate w-full border border-black rounded-md p-1 select-all" (click)="onCopyUrl()">{{ url() }}</p>
+      @if (url()) {
+        <p class="truncate w-full border border-black rounded-md p-1 select-all" (click)="onCopyUrl()">{{ url() }}</p>
+      } @else {
+        <p class="truncate w-full border border-black rounded-md p-1 text-stone-800">Loading...</p>
+      }
       <p class="text-xl font-medium">Paste code from your friend</p>
       <input class="rounded-md outline-none w-full px-2 py-1" (input)="onCodeInput($event)">
       <button [routerLink]="['../']">Back</button>
@@ -36,7 +40,7 @@ export class HostGameComponent {
     this.rtcManager.initialize().then((data) => {
       return RtcManagerService.formatAsUrl(data)
     }).then(formatted => {
-      this.url.set(`${ location.origin }/join-game?code=${ formatted }`);
+      this.url.set(`${ location.origin }${ isDevMode() ? '' : '/skyraider' }/join-game?code=${ formatted }`);
     })
     this.rtcManager.onChannelOpen.pipe(
       takeUntilDestroyed(),

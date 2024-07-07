@@ -28,6 +28,7 @@ export class RtcManagerService {
     this.iceCandidates = new Promise<RTCIceCandidate[]>(resolve => {
       const iceCandidates = [] as RTCIceCandidate[];
       this.pc!.onicecandidate = ({ candidate }) => {
+        console.log('ICE Candidate', candidate)
         if (candidate) iceCandidates.push(candidate);
         else resolve(iceCandidates)
       }
