@@ -36,6 +36,9 @@ export class ChessControlsComponent implements GameObject {
       this.controls!.enableZoom = false;
       this.controls!.autoRotate = true;
       this.controls?.update()
+    } else if (this.gameController.state() == GameState.Result) {
+      this.controls!.enableRotate = false;
+      this.controls!.enableZoom = false;
     } else {
       this.controls!.enableRotate = true;
       this.controls!.enableZoom = true;

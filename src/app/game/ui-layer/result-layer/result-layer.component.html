@@ -1,0 +1,19 @@
+<div class="absolute inset-0">
+  <div class="h-full flex flex-col items-center justify-center">
+    @if (result().isCheckmate) {
+      <h1>Checkmate</h1>
+      <h2>{{ colorToMove() == 'b' ? 'White' : 'Black' }} Wins</h2>
+    } @else {
+      @if (result().isThreefoldRepetition) {
+        <h1>Draw by Threefold Repetition</h1>
+      } @else if (result().isInsufficientMaterial) {
+        <h1>Draw by Insufficient Material</h1>
+      } @else if (result().isDraw) {
+        <h1>Draw</h1>
+      } @else if (result().isStalemate) {
+        <h1>Stalemate</h1>
+      }
+    }
+    <button class="text-xl font-medium pointer-events-auto" (click)="onRestartClick()">Restart</button>
+  </div>
+</div>

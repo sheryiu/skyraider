@@ -94,7 +94,11 @@ export class ChessPieceComponent implements GameObject {
 
   onPointerdown(event: PointerEvent) {
     if (!this.gameController.isInteractable) return;
-    this.gameController.selectSquare(this.square());
+    if (this.gameController.validMovesToSquare.includes(this.square()) && this.gameController.selectedSquare) {
+      this.gameController.move(this.gameController.selectedSquare, this.square())
+    } else {
+      this.gameController.selectSquare(this.square());
+    }
     return true;
   }
 

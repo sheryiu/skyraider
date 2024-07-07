@@ -1,11 +1,13 @@
 <div class="absolute inset-0 transition-all pointer-events-none" [ngClass]="{
-  'backdrop-blur-sm bg-black/5': this.gameState() == gameStates.Initial,
-  'backdrop-blur-none bg-transparent': this.gameState() != gameStates.Initial,
+  'backdrop-blur-sm bg-black/5': this.gameState() == gameStates.Initial || this.gameState() == gameStates.Result,
+  'backdrop-blur-none bg-transparent': this.gameState() == gameStates.Game,
 }">
   @if (this.gameState() == gameStates.Initial) {
     <div class="h-full flex items-center justify-center flex-col gap-4">
-      <h1 class="text-3xl font-black uppercase">Chess</h1>
+      <h1>Chess</h1>
       <button class="text-xl font-medium pointer-events-auto" (click)="onStartGameClick()">Start Game</button>
     </div>
+  } @else if (this.gameState() == gameStates.Result) {
+    <app-result-layer></app-result-layer>
   }
 </div>
