@@ -4,7 +4,7 @@
       class="flex-1 flex justify-start items-center bg-white rounded-2xl px-6 relative"
       [ngClass]="{ 'before:absolute before:inset-1 before:rounded-xl before:border-2 before:border-black/50': colorToMove() == 'w' }"
     >
-      <h1 class="text-black leading-none pb-1">White</h1>
+      <h1 class="text-[clamp(1rem,_3rem,_5svw)]/none text-black leading-none pb-1">White</h1>
       @if (colorToMove() == 'w') {
         <div class="grow"></div>
         <span class="text-5xl/none text-black">♚</span>
@@ -14,7 +14,7 @@
       class="flex-1 flex flex-row-reverse justify-start items-center bg-black rounded-2xl px-6 relative"
       [ngClass]="{ 'before:absolute before:inset-1 before:rounded-xl before:border-2 before:border-white/50': colorToMove() == 'b' }"
     >
-      <h1 class="text-white leading-none pb-1">Black</h1>
+      <h1 class="text-[clamp(1rem,_3rem,_5svw)]/none text-white leading-none pb-1">Black</h1>
       @if (colorToMove() == 'b') {
         <div class="grow"></div>
         <span class="text-5xl/none text-white">♚</span>
