@@ -93,7 +93,7 @@ export class ChessPieceComponent implements GameObject {
   }
 
   onPointerdown(event: PointerEvent) {
-    if (!this.gameController.isInteractable) return;
+    if (!this.gameController.getIsCurrentColorInteractable()) return;
     if (this.gameController.validMovesToSquare.includes(this.square()) && this.gameController.selectedSquare) {
       this.gameController.move({ from: this.gameController.selectedSquare, to: this.square()})
     } else {

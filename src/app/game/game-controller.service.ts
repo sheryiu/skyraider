@@ -21,7 +21,6 @@ const CHECKMATE_TEST_SETUP = '2R1k3/8/5P2/4N3/8/8/8/4K3 b - - 0 1'
 export class GameControllerService {
 
   private chess = new Chess(NOT_YET_START_SETUP);
-  isInteractable = false;
   pieces = signal([] as Array<{
     _id: Symbol;
     square: Square;
@@ -35,7 +34,10 @@ export class GameControllerService {
   }))
   selectedSquare: Square | null = null;
   validMovesToSquare: Square[] = [];
-  colorToMove = signal<Color>(WHITE)
+  isInteractable = signal(false);
+  isWhiteMovable = signal<boolean>(false);
+  isBlackMovable = signal<boolean>(false);
+  colorToMove = signal<Color>(WHITE);
   isInCheck = signal<boolean>(false);
   result = signal<{
     isCheckmate: boolean;
@@ -60,7 +62,7 @@ export class GameControllerService {
       switch (this.state()) {
         case GameState.Initial: {
           this.chess.load(NOT_YET_START_SETUP)
-          this.isInteractable = false;
+          this.isInteractable.set(false);
           this.initializePiecesLocation();
           break;
         }
@@ -71,20 +73,22 @@ export class GameControllerService {
             this.endGame();
             return;
           }
-          this.isInteractable = true;
+          this.isInteractable.set(true);
           break;
         }
         case GameState.Result: {
-          this.isInteractable = false;
+          this.isInteractable.set(false);
           break;
         }
       }
     }, { allowSignalWrites: true })
   }
 
-  startGame(fen?: string) {
+  startGame(options: { isWhiteMovable: boolean, isBlackMovable: boolean, fen?: string }) {
     if (this.state() != GameState.Initial) throw new Error('Invalid State');
-    this.chess.load(fen ?? DEFAULT_POSITION)
+    this.chess.load(options.fen ?? DEFAULT_POSITION)
+    this.isWhiteMovable.set(options.isWhiteMovable)
+    this.isBlackMovable.set(options.isBlackMovable)
     this.initializePiecesLocation();
     this.result.set({
       isCheckmate: this.chess.isCheckmate(),
@@ -100,10 +104,11 @@ export class GameControllerService {
     return this.chess.fen();
   }
 
-  move(options: { from?: Square, to?: Square, san?: string }) {
+  // TODO promotion
+  move(options: { from?: Square, to?: Square, promotion?: string, san?: string }) {
     if (this.state() != GameState.Game) throw new Error('Invalid State');
     const move = (options.from && options.to)
-      ? this.chess.move({ from: options.from, to: options.to })
+      ? this.chess.move({ from: options.from, to: options.to, promotion: options.promotion })
       : options.san
       ? this.chess.move(options.san)
       : this.chess.move('');
@@ -187,5 +192,9 @@ export class GameControllerService {
         isSelected: piece.square == square,
       }));
     })
+  }
+
+  getIsCurrentColorInteractable() {
+    return this.isInteractable() && (this.colorToMove() == 'w' ? this.isWhiteMovable() : this.isBlackMovable())
   }
 }

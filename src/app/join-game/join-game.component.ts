@@ -13,8 +13,9 @@ import { RtcManagerService } from '../core/rtc-manager.service';
   ],
   template: `
   <div class="absolute inset-0 backdrop-blur-sm bg-black/10 flex items-center justify-center">
-    <div class="flex items-center justify-center flex-col max-w-screen-md min-w-60 w-4/12 bg-white/40 rounded-2xl p-6 gap-4">
+    <div class="flex items-center justify-center flex-col max-w-screen-md min-w-60 w-4/12 bg-white rounded-2xl p-6 gap-4 relative before:absolute before:inset-1 before:rounded-xl before:border-2 before:border-black/50 before:pointer-events-none">
       <p class="text-xl font-medium">Send this code back to your friend</p>
+      <p class="-my-2">Click text to copy</p>
       @if (code()) {
         <p class="truncate w-full border border-black rounded-md p-1 select-all" (click)="onCopyCode()">{{ code() }}</p>
       } @else {

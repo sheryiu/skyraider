@@ -4,7 +4,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { MultiplayerService } from '../core/multiplayer.service';
 import { RtcManagerService } from '../core/rtc-manager.service';
-import { GameControllerService } from '../game/game-controller.service';
 
 @Component({
   selector: 'app-host-game',
@@ -14,15 +13,17 @@ import { GameControllerService } from '../game/game-controller.service';
   ],
   template: `
   <div class="absolute inset-0 backdrop-blur-sm bg-black/10 flex items-center justify-center">
-    <div class="flex items-center justify-center flex-col max-w-screen-md min-w-60 w-4/12 bg-white/40 rounded-2xl p-6 gap-4">
+    <div class="flex items-center justify-center flex-col max-w-screen-md min-w-60 w-4/12 bg-white rounded-2xl p-6 gap-4 relative before:absolute before:inset-1 before:rounded-xl before:border-2 before:border-black/50 before:pointer-events-none">
       <p class="text-xl font-medium">Send this URL to your friend</p>
+      <p class="-my-2">Click URL to copy</p>
       @if (url()) {
         <p class="truncate w-full border border-black rounded-md p-1 select-all" (click)="onCopyUrl()">{{ url() }}</p>
       } @else {
         <p class="truncate w-full border border-black rounded-md p-1 text-stone-800">Loading...</p>
       }
-      <p class="text-xl font-medium">Paste code from your friend</p>
-      <input class="rounded-md outline-none w-full px-2 py-1" (input)="onCodeInput($event)">
+      <p class="text-xl font-medium">Then, paste code from your friend</p>
+      <input class="rounded-md outline-none w-full px-2 py-1 border border-black" (input)="onCodeInput($event)" placeholder="Paste here">
+      <div class="w-full h-0.5 bg-gradient-to-r from-transparent via-black to-transparent"></div>
       <button [routerLink]="['../']">Back</button>
     </div>
   </div>

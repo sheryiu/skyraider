@@ -1,13 +1,17 @@
-<div class="absolute inset-0 transition-all pointer-events-none" [ngClass]="{
+<div class="absolute inset-0 transition-all pointer-events-none flex justify-center items-center" [ngClass]="{
   'backdrop-blur-sm bg-black/5': this.gameState() == gameStates.Initial || this.gameState() == gameStates.Result,
   'backdrop-blur-none bg-transparent': this.gameState() == gameStates.Game,
 }">
   @if (this.gameState() == gameStates.Initial) {
-    <div class="h-full flex items-center justify-center flex-col gap-4">
+    <div class="flex items-center justify-center flex-col max-w-screen-md min-w-60 w-4/12 bg-white text-black rounded-2xl p-6 gap-4 relative before:absolute before:inset-1 before:rounded-xl before:border-2 before:border-black/50">
       <h1>Chess</h1>
+      <div class="w-full h-0.5 bg-gradient-to-r from-transparent via-black to-transparent"></div>
       <button class="text-xl font-medium pointer-events-auto" (click)="onStartGameClick()">Start Game</button>
+      <div class="w-full h-0.5 bg-gradient-to-r from-transparent via-black to-transparent"></div>
       <button class="text-xl font-medium pointer-events-auto" [routerLink]="['host-game']">Host Game</button>
     </div>
+  } @else if (this.gameState() == gameStates.Game) {
+    <app-in-game-layer></app-in-game-layer>
   } @else if (this.gameState() == gameStates.Result) {
     <app-result-layer></app-result-layer>
   }

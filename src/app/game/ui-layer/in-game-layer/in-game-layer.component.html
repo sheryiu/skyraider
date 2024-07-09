@@ -1,0 +1,24 @@
+<div class="absolute pointer-events-none w-full left-0 top-0">
+  <div class="flex h-32 p-6 gap-6">
+    <div
+      class="flex-1 flex justify-start items-center bg-white rounded-2xl px-6 relative"
+      [ngClass]="{ 'before:absolute before:inset-1 before:rounded-xl before:border-2 before:border-black/50': colorToMove() == 'w' }"
+    >
+      <h1 class="text-black leading-none pb-1">White</h1>
+      @if (colorToMove() == 'w') {
+        <div class="grow"></div>
+        <span class="text-5xl/none text-black">♚</span>
+      }
+    </div>
+    <div
+      class="flex-1 flex flex-row-reverse justify-start items-center bg-black rounded-2xl px-6 relative"
+      [ngClass]="{ 'before:absolute before:inset-1 before:rounded-xl before:border-2 before:border-white/50': colorToMove() == 'b' }"
+    >
+      <h1 class="text-white leading-none pb-1">Black</h1>
+      @if (colorToMove() == 'b') {
+        <div class="grow"></div>
+        <span class="text-5xl/none text-white">♚</span>
+      }
+    </div>
+  </div>
+</div>

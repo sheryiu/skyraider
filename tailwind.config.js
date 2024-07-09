@@ -1,4 +1,4 @@
-import plugin from 'tailwindcss/plugin'
+import plugin from 'tailwindcss/plugin';
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -9,7 +9,7 @@ module.exports = {
     extend: {},
   },
   plugins: [
-    plugin(({ addBase }) => {
+    plugin(({ addBase, addComponents }) => {
       addBase({
         'h1': {
           'font-size': '3.5rem',
@@ -23,7 +23,7 @@ module.exports = {
           'text-transform': 'uppercase',
           'letter-spacing': '-0.05rem',
         }
-      })
+      });
     })
   ],
 }

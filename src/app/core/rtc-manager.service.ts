@@ -13,8 +13,6 @@ export class RtcManagerService {
   onChannelOpen = new ReplaySubject<boolean | null>(1);
   onChannelDataReceive = new Subject<string>();
 
-  constructor() {console.log('rtc init') }
-
   initialize(withOffer?: RTCSessionDescriptionInit) {
     this.onChannelOpen.next(null)
     const configuration: RTCConfiguration = {
@@ -27,10 +25,23 @@ export class RtcManagerService {
     this.pc = new RTCPeerConnection(configuration)
     this.iceCandidates = new Promise<RTCIceCandidate[]>(resolve => {
       const iceCandidates = [] as RTCIceCandidate[];
+      let resolved = false;
+      const timeout = setTimeout(() => {
+        if (!resolved) {
+          resolved = true;
+          resolve(iceCandidates)
+        }
+      }, 10_000)
       this.pc!.onicecandidate = ({ candidate }) => {
         console.log('ICE Candidate', candidate)
         if (candidate) iceCandidates.push(candidate);
-        else resolve(iceCandidates)
+        else {
+          if (!resolved) {
+            resolved = true;
+            clearTimeout(timeout)
+            resolve(iceCandidates)
+          }
+        }
       }
     });
     if (withOffer) {
@@ -66,9 +77,11 @@ export class RtcManagerService {
       this.onChannelOpen.next(true);
     }
     this.dataChannel.onclose = event => {
+      console.log('close')
       this.onChannelOpen.next(null);
     }
     this.dataChannel.onerror = event => {
+      console.log('error', event)
       this.onChannelOpen.next(null);
     }
     this.dataChannel.onmessage = event => {

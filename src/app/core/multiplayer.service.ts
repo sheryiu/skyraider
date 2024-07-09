@@ -14,7 +14,7 @@ export class MultiplayerService {
 
   startGameAsHost() {
     this.isHost = true;
-    this.gameController.startGame();
+    this.gameController.startGame({ isWhiteMovable: true, isBlackMovable: false });
     this.rtcManager.sendData(`${ START_PREFIX }${ this.gameController.getFen() }`)
     this.rtcManager.onChannelDataReceive.subscribe((data) => {
       if (data.startsWith(START_PREFIX)) {
@@ -23,7 +23,9 @@ export class MultiplayerService {
       }
     })
     this.gameController.onMove.subscribe((move) => {
-      this.rtcManager.sendData(`${ MOVE_PREFIX }${ move.san }`)
+      if ((move.color == 'b' && this.gameController.isBlackMovable()) || (move.color == 'w' && this.gameController.isWhiteMovable())) {
+        this.rtcManager.sendData(`${ MOVE_PREFIX }${ move.san }`)
+      }
     })
   }
 
@@ -31,13 +33,19 @@ export class MultiplayerService {
     this.isHost = false;
     this.rtcManager.onChannelDataReceive.subscribe((data) => {
       if (data.startsWith(START_PREFIX)) {
-        this.gameController.startGame(data.substring(START_PREFIX.length))
+        this.gameController.startGame({
+          isWhiteMovable: false,
+          isBlackMovable: true,
+          fen: data.substring(START_PREFIX.length)
+        })
       } else if (data.startsWith(MOVE_PREFIX)) {
         this.gameController.move({ san: data.substring(MOVE_PREFIX.length) })
       }
     })
     this.gameController.onMove.subscribe((move) => {
-      this.rtcManager.sendData(`${ MOVE_PREFIX }${ move.san }`)
+      if ((move.color == 'b' && this.gameController.isBlackMovable()) || (move.color == 'w' && this.gameController.isWhiteMovable())) {
+        this.rtcManager.sendData(`${ MOVE_PREFIX }${ move.san }`)
+      }
     })
   }
 }
