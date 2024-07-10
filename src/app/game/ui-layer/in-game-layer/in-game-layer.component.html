@@ -27,7 +27,7 @@
 </div>
 @if (gameState() == gameStates.PickPromotion) {
   <div class="absolute inset-0 flex items-center justify-center backdrop-blur-sm bg-black/5 pointer-events-auto">
-    <div class="grid grid-cols-2 max-w-screen-md min-w-40 w-3/12 bg-white text-black rounded-2xl p-6 gap-4 relative before:pointer-events-none before:absolute before:inset-1 before:rounded-xl before:border-2 before:border-black/50">
+    <div class="grid grid-cols-2 max-w-screen-md min-w-60 w-3/12 bg-white text-black rounded-2xl p-6 gap-4 relative before:pointer-events-none before:absolute before:inset-1 before:rounded-xl before:border-2 before:border-black/50">
       <span class="col-span-2 text-center text-2xl font-medium">Pawn Promotion</span>
       <button type="button" class="rounded-xl bg-black text-white aspect-square" (click)="onChoosePromotion('n')">
         <span class="text-7xl">♞</span>

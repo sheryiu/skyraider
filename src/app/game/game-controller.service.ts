@@ -93,7 +93,7 @@ export class GameControllerService {
 
   startGame(options: { isWhiteMovable: boolean, isBlackMovable: boolean, fen?: string }) {
     if (this.state() != GameState.Initial) throw new Error('Invalid State');
-    this.chess.load(options.fen ?? PROMOTION_TEST_SETUP)
+    this.chess.load(options.fen ?? DEFAULT_POSITION)
     this.isWhiteMovable.set(options.isWhiteMovable)
     this.isBlackMovable.set(options.isBlackMovable)
     this.promotionAttempt.set(null)
