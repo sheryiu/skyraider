@@ -10,12 +10,14 @@ function addRank(square: Square, rankDiff: number): Square {
 export enum GameState {
   Initial,
   Game,
+  PickPromotion,
   Result,
 }
 
 const NOT_YET_START_SETUP = '4k3/8/8/8/8/8/8/4K3 w - - 0 1'
 const CASTLING_TEST_SETUP = 'rnbqkbnr/8/8/pppp1ppp/1P1PpPP1/B1NQ1N1B/P1P1P2P/R3K2R w KQkq - 0 10'
 const CHECKMATE_TEST_SETUP = '2R1k3/8/5P2/4N3/8/8/8/4K3 b - - 0 1'
+const PROMOTION_TEST_SETUP = '2q5/4P3/k7/8/8/8/8/3K4 w - - 0 1'
 
 @Injectable()
 export class GameControllerService {
@@ -39,6 +41,7 @@ export class GameControllerService {
   isBlackMovable = signal<boolean>(false);
   colorToMove = signal<Color>(WHITE);
   isInCheck = signal<boolean>(false);
+  promotionAttempt = signal<{ from: Square; to: Square; } | null>(null);
   result = signal<{
     isCheckmate: boolean;
     isDraw: boolean;
@@ -76,6 +79,10 @@ export class GameControllerService {
           this.isInteractable.set(true);
           break;
         }
+        case GameState.PickPromotion: {
+          this.isInteractable.set(false)
+          break;
+        }
         case GameState.Result: {
           this.isInteractable.set(false);
           break;
@@ -86,9 +93,10 @@ export class GameControllerService {
 
   startGame(options: { isWhiteMovable: boolean, isBlackMovable: boolean, fen?: string }) {
     if (this.state() != GameState.Initial) throw new Error('Invalid State');
-    this.chess.load(options.fen ?? DEFAULT_POSITION)
+    this.chess.load(options.fen ?? PROMOTION_TEST_SETUP)
     this.isWhiteMovable.set(options.isWhiteMovable)
     this.isBlackMovable.set(options.isBlackMovable)
+    this.promotionAttempt.set(null)
     this.initializePiecesLocation();
     this.result.set({
       isCheckmate: this.chess.isCheckmate(),
@@ -100,11 +108,22 @@ export class GameControllerService {
     this.state.set(GameState.Game);
   }
 
-  getFen() {
-    return this.chess.fen();
+  movePawnToPromotion(options: { from: Square, to: Square }) {
+    if (this.state() != GameState.Game) throw new Error('Invalid State');
+    this.promotionAttempt.set(options)
+    this.state.set(GameState.PickPromotion);
   }
 
-  // TODO promotion
+  promote(promoteTo: PieceSymbol) {
+    if (this.state() != GameState.PickPromotion || this.promotionAttempt() == null) throw new Error('Invalid State');
+    const move = this.chess.move({ from: this.promotionAttempt()!.from, to: this.promotionAttempt()!.to, promotion: promoteTo });
+    this.updatePiecesLocation(move);
+    this.onMove.next(move);
+    this.selectedSquare = null;
+    this.validMovesToSquare = [];
+    this.state.set(GameState.Game);
+  }
+
   move(options: { from?: Square, to?: Square, promotion?: string, san?: string }) {
     if (this.state() != GameState.Game) throw new Error('Invalid State');
     const move = (options.from && options.to)
@@ -156,6 +175,10 @@ export class GameControllerService {
             const removedPawnSquare: Square = move.color == WHITE ? addRank(move.to, -1) : addRank(move.to, 1);
             if (move.captured == p.type && move.color != p.color && removedPawnSquare == p.square) return false;
           }
+          if (move.flags.includes('p') && move.promotion) {
+            // promotion
+            if (p.square == move.from) return false;
+          }
           if (move.captured == p.type && move.color != p.color && move.to == p.square) return false;
           return true
         })
@@ -180,6 +203,13 @@ export class GameControllerService {
           }
           return p;
         })
+        .toSpliced(0, 0, ...(move.promotion ? [{
+          square: move.to,
+          type: move.promotion,
+          color: move.color,
+          isSelected: false,
+          _id: Symbol(),
+        }] : []))
     })
   }
 
@@ -196,5 +226,13 @@ export class GameControllerService {
 
   getIsCurrentColorInteractable() {
     return this.isInteractable() && (this.colorToMove() == 'w' ? this.isWhiteMovable() : this.isBlackMovable())
+  }
+
+  getFen() {
+    return this.chess.fen();
+  }
+
+  getPieceAt(square: Square) {
+    return this.chess.get(square)
   }
 }

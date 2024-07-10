@@ -1,6 +1,7 @@
 import { NgClass } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { GameControllerService } from '../../game-controller.service';
+import { PieceSymbol } from 'chess.js';
+import { GameControllerService, GameState } from '../../game-controller.service';
 
 @Component({
   selector: 'app-in-game-layer',
@@ -12,5 +13,13 @@ import { GameControllerService } from '../../game-controller.service';
 })
 export class InGameLayerComponent {
   private gameController = inject(GameControllerService);
+  gameState = this.gameController.state.asReadonly();
+  isInCheck = this.gameController.isInCheck.asReadonly();
   colorToMove = this.gameController.colorToMove.asReadonly();
+
+  gameStates = GameState;
+
+  onChoosePromotion(piece: PieceSymbol) {
+    this.gameController.promote(piece)
+  }
 }

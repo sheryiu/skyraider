@@ -1,4 +1,4 @@
-<div class="absolute pointer-events-none w-full left-0 top-0">
+<div class="absolute pointer-events-none w-full left-0 top-0 flex flex-col">
   <div class="flex h-32 p-6 gap-6">
     <div
       class="flex-1 flex justify-start items-center bg-white rounded-2xl px-6 relative"
@@ -21,4 +21,26 @@
       }
     </div>
   </div>
+  @if (isInCheck()) {
+    <div class="flex justify-center uppercase text-2xl font-bold">Check</div>
+  }
 </div>
+@if (gameState() == gameStates.PickPromotion) {
+  <div class="absolute inset-0 flex items-center justify-center backdrop-blur-sm bg-black/5 pointer-events-auto">
+    <div class="grid grid-cols-2 max-w-screen-md min-w-40 w-3/12 bg-white text-black rounded-2xl p-6 gap-4 relative before:pointer-events-none before:absolute before:inset-1 before:rounded-xl before:border-2 before:border-black/50">
+      <span class="col-span-2 text-center text-2xl font-medium">Pawn Promotion</span>
+      <button type="button" class="rounded-xl bg-black text-white aspect-square" (click)="onChoosePromotion('n')">
+        <span class="text-7xl">♞</span>
+      </button>
+      <button type="button" class="rounded-xl bg-black text-white aspect-square" (click)="onChoosePromotion('b')">
+        <span class="text-7xl">♝</span>
+      </button>
+      <button type="button" class="rounded-xl bg-black text-white aspect-square" (click)="onChoosePromotion('r')">
+        <span class="text-7xl">♜</span>
+      </button>
+      <button type="button" class="rounded-xl bg-black text-white aspect-square" (click)="onChoosePromotion('q')">
+        <span class="text-7xl">♛</span>
+      </button>
+    </div>
+  </div>
+}
