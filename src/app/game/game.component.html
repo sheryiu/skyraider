@@ -1,8 +1,14 @@
 <div class="relative overflow-hidden">
   @if (!isLoading()) {
-    <app-three-js-container [currentCamera]="camera" [currentScene]="scene">
-      <app-chess-camera #camera></app-chess-camera>
-      <app-chess-controls [currentCamera]="camera"></app-chess-controls>
+    <app-three-js-container [currentCamera]="camera()" [currentScene]="scene">
+      <!-- <app-chess-camera #camera></app-chess-camera> -->
+      @if (use2D()) {
+        <app-chess-orthographic-camera #camera></app-chess-orthographic-camera>
+      } @else {
+        <app-chess-camera #camera></app-chess-camera>
+        <app-chess-controls [currentCamera]="camera"></app-chess-controls>
+      }
+      <!-- <app-chess-controls [currentCamera]="camera"></app-chess-controls> -->
       <app-chess-scene #scene>
         @for (square of board; track square) {
           <app-chess-board-square [square]="square.square" [color]="square.color"></app-chess-board-square>
@@ -11,7 +17,7 @@
           <app-chess-piece [color]="piece.color" [square]="piece.square" [piece]="piece.type" [isSelected]="piece.isSelected"></app-chess-piece>
         }
         <!-- <app-raycast-box [currentCamera]="camera" [currentScene]="scene"></app-raycast-box> -->
-        <app-chess-light #light [camera]="camera"></app-chess-light>
+        <app-chess-light #light [camera]="camera()!"></app-chess-light>
         <!-- <app-chess-light-helper [light]="light"></app-chess-light-helper> -->
         <!-- <app-chess-camera-helper [camera]="light"></app-chess-camera-helper> -->
       </app-chess-scene>

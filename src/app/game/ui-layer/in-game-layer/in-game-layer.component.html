@@ -1,4 +1,4 @@
-<div class="absolute pointer-events-none w-full left-0 top-0 flex flex-col">
+<div class="absolute pointer-events-none inset-0 flex flex-col">
   <div class="flex h-32 p-6 gap-6">
     <div
       class="flex-1 flex justify-start items-center bg-white rounded-2xl px-6 relative"
@@ -24,6 +24,11 @@
   @if (isInCheck()) {
     <div class="flex justify-center uppercase text-2xl font-bold">Check</div>
   }
+  <div class="grow"></div>
+  <div class="rounded-2xl p-4 bg-white text-black self-center mb-6 flex gap-3">
+    <button class="rounded-xl border border-black p-3 text-xl font-bold aspect-square pointer-events-auto" (click)="onSetCamera(true)">2D</button>
+    <button class="rounded-xl border border-black p-3 text-xl font-bold aspect-square pointer-events-auto" (click)="onSetCamera(false)">3D</button>
+  </div>
 </div>
 @if (gameState() == gameStates.PickPromotion) {
   <div class="absolute inset-0 flex items-center justify-center backdrop-blur-sm bg-black/5 pointer-events-auto">

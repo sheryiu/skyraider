@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input } from '@angular/core';
+import { Component, computed, effect, inject, input, untracked } from '@angular/core';
 import { Color, PieceSymbol, Square } from 'chess.js';
 import { Mesh, Object3D, Object3DEventMap, Vector3, WebGLRenderer } from 'three';
 import { ModelLoaderService } from '../../core/model-loader.service';
@@ -57,15 +57,21 @@ export class ChessPieceComponent implements GameObject {
   private loader = inject(ModelLoaderService);
   private gameController = inject(GameControllerService);
   private targetPosition = new Vector3();
+  // private targetRotation
   private stateChangedAt: DOMHighResTimeStamp = 0;
   private lastAnimationFrameAt: DOMHighResTimeStamp = 0;
+  private use2D = this.gameController.use2DCamera.asReadonly();
 
   constructor() {
     effect(() => {
       const file = this.file();
       const rank = this.rank();
       if (!this.initialized) return;
-      this.targetPosition.set(-fileToInt(this.file()) * 4 + 16 - 2, 0, rankToInt(rank) * 4 - 16 + 2)
+      this.targetPosition.set(
+        -fileToInt(this.file()) * 4 + 16 - 2,
+        0,
+        rankToInt(rank) * 4 - 16 + 2 + untracked(() => this.use2D() ? 1 : 0)
+      )
       this.stateChangedAt = this.lastAnimationFrameAt;
     })
     effect(() => {
@@ -73,6 +79,28 @@ export class ChessPieceComponent implements GameObject {
       if (!this.initialized) return;
       this.targetPosition.y = isSelected ? 1 : 0;
       this.stateChangedAt = this.lastAnimationFrameAt;
+    })
+    effect(() => {
+      const use2D = this.use2D();
+      if (!this.initialized) return;
+      // order of rotation matters!
+      if (use2D) {
+        untracked(() => {
+          this.object3D!.rotateX(Math.PI / 2)
+          this.object3D!.rotateZ(this.color() == 'b' ? (Math.PI / 2) : (Math.PI / -2))
+          this.object3D!.scale.setScalar(0.8)
+          this.targetPosition.z += 1;
+          this.stateChangedAt = this.lastAnimationFrameAt;
+        })
+      } else {
+        untracked(() => {
+          this.object3D!.rotateZ(this.color() == 'b' ? (Math.PI / -2) : (Math.PI / 2))
+          this.object3D!.rotateX(-Math.PI / 2)
+          this.object3D!.scale.setScalar(1)
+          this.targetPosition.z -= 1;
+          this.stateChangedAt = this.lastAnimationFrameAt;
+        })
+      }
     })
   }
 

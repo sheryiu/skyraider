@@ -1,6 +1,7 @@
-import { effect, Injectable, signal } from '@angular/core';
+import { effect, Injectable, signal, viewChild } from '@angular/core';
 import { Chess, Color, DEFAULT_POSITION, Move, PieceSymbol, ROOK, Square, SQUARES, WHITE } from 'chess.js';
 import { Subject } from 'rxjs';
+import { CameraGameObject } from '../three-js-container/three-js';
 
 function addRank(square: Square, rankDiff: number): Square {
   const [file, rank] = square.split('');
@@ -34,6 +35,7 @@ export class GameControllerService {
     square,
     color: this.chess.squareColor(square),
   }))
+  use2DCamera = signal(false);
   selectedSquare: Square | null = null;
   validMovesToSquare: Square[] = [];
   isInteractable = signal(false);

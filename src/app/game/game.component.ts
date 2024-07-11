@@ -1,8 +1,9 @@
-import { Component, afterNextRender, inject } from '@angular/core';
+import { Component, afterNextRender, inject, viewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Chess, Color, PieceSymbol, Square } from 'chess.js';
 import { ModelLoaderService } from '../core/model-loader.service';
 import { MultiplayerService } from '../core/multiplayer.service';
+import { CameraGameObject } from '../three-js-container/three-js';
 import { ThreeJsContainerComponent } from '../three-js-container/three-js-container.component';
 import { ChessBoardSquareComponent } from './chess-board-square/chess-board-square.component';
 import { ChessCameraHelperComponent } from './chess-camera-helper/chess-camera-helper.component';
@@ -10,6 +11,7 @@ import { ChessCameraComponent } from './chess-camera/chess-camera.component';
 import { ChessControlsComponent } from './chess-controls/chess-controls.component';
 import { ChessLightHelperComponent } from './chess-light-helper/chess-light-helper.component';
 import { ChessLightComponent } from './chess-light/chess-light.component';
+import { ChessOrthographicCameraComponent } from './chess-orthographic-camera/chess-orthographic-camera.component';
 import { ChessPieceComponent } from './chess-piece/chess-piece.component';
 import { ChessSceneComponent } from './chess-scene/chess-scene.component';
 import { GameControllerService } from './game-controller.service';
@@ -39,6 +41,7 @@ export function rankToInt(rank: string) {
     ChessLightHelperComponent,
     ChessCameraHelperComponent,
     UiLayerComponent,
+    ChessOrthographicCameraComponent,
   ],
   providers: [GameControllerService, MultiplayerService],
   templateUrl: './game.component.html',
@@ -50,6 +53,9 @@ export class GameComponent {
   private gameController = inject(GameControllerService);
   pieces = this.gameController.pieces;
   board = this.gameController.board;
+  use2D = this.gameController.use2DCamera.asReadonly();
+
+  camera = viewChild<CameraGameObject>('camera');
 
   constructor() {
     afterNextRender(() => {

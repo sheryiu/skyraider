@@ -1,5 +1,5 @@
 import { Component, effect, inject, input } from '@angular/core';
-import { Vector3, WebGLRenderer } from 'three';
+import { WebGLRenderer } from 'three';
 // import { MapControls } from 'three/addons/controls/MapControls.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { CameraGameObject, GameObject, provideAsGameObject } from '../../three-js-container/three-js';
@@ -36,6 +36,8 @@ export class ChessControlsComponent implements GameObject {
     this.controls.update();
     this.controls.enablePan = false;
     this.controls.enableDamping = false;
+    this.controls.enableRotate = this.isInteractable();
+    this.controls.enableZoom = this.isInteractable();
     this.controls.minPolarAngle = Math.PI * 0.1;
     this.controls.maxPolarAngle = Math.PI * 0.4;
   }
@@ -47,5 +49,9 @@ export class ChessControlsComponent implements GameObject {
     } else {
       this.controls!.autoRotate = false;
     }
+  }
+
+  onDispose(): void {
+    this.controls?.dispose();
   }
 }

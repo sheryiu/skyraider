@@ -12,6 +12,7 @@ export interface GameObject {
   init?(renderer: WebGLRenderer, canvas: HTMLCanvasElement): void;
   animate?(time: DOMHighResTimeStamp, frame: XRFrame, renderer: WebGLRenderer, canvas: HTMLCanvasElement): void;
   onPointerdown?(event: PointerEvent): boolean | undefined | void;
+  onDispose?(): void;
 }
 
 @Component({
@@ -44,6 +45,7 @@ export abstract class SceneGameObject implements GameObject {
         gameObjectsInScene.forEach(gameObject => {
           if (this.gameObjects().includes(gameObject)) return;
           // TODO add remove animation
+          gameObject.onDispose?.();
           scene.remove(gameObject.object3D!)
           gameObjectsInScene.delete(gameObject)
         })

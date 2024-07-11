@@ -37,6 +37,7 @@ export class ThreeJsContainerComponent {
   currentCamera = input<CameraGameObject>()
 
   constructor() {
+    const gameObjectsInScene = new Set<GameObject>();
     afterNextRender(() => {
       effect(() => {
         const renderer = this.renderer();
@@ -46,6 +47,12 @@ export class ThreeJsContainerComponent {
           if (gameObject.initialized) return;
           gameObject.init?.(renderer, canvas);
           gameObject.initialized = true;
+          gameObjectsInScene.add(gameObject)
+        })
+        gameObjectsInScene.forEach(gameObject => {
+          if (this.gameObjects().includes(gameObject)) return;
+          gameObject.onDispose?.();
+          gameObjectsInScene.delete(gameObject)
         })
       }, { injector: this.injector, allowSignalWrites: true });
 
