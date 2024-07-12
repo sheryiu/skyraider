@@ -25,3 +25,17 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+## License
+
+Model Information:
+* title:	Low Poly Chess Pieces
+* source:	https://sketchfab.com/3d-models/low-poly-chess-pieces-ce7f8b49729946bb9a5b46ac2f67147f
+* author:	Steva_ (https://sketchfab.com/Steva_)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Low Poly Chess Pieces" (https://sketchfab.com/3d-models/low-poly-chess-pieces-ce7f8b49729946bb9a5b46ac2f67147f) by Steva_ (https://sketchfab.com/Steva_) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

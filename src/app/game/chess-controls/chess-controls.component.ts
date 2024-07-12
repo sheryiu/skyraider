@@ -51,7 +51,7 @@ export class ChessControlsComponent implements GameObject {
     }
   }
 
-  onDispose(): void {
+  onBeforeDispose(): void {
     this.controls?.dispose();
   }
 }

@@ -51,7 +51,7 @@ export class ThreeJsContainerComponent {
         })
         gameObjectsInScene.forEach(gameObject => {
           if (this.gameObjects().includes(gameObject)) return;
-          gameObject.onDispose?.();
+          gameObject.onBeforeDispose?.();
           gameObjectsInScene.delete(gameObject)
         })
       }, { injector: this.injector, allowSignalWrites: true });

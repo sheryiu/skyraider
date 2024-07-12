@@ -90,7 +90,7 @@ export class ChessPieceComponent implements GameObject {
           this.object3D!.rotateZ(this.color() == 'b' ? (Math.PI / 2) : (Math.PI / -2))
           this.object3D!.scale.setScalar(0.8)
           this.targetPosition.z += 1;
-          this.stateChangedAt = this.lastAnimationFrameAt;
+          this.stateChangedAt = 0;
         })
       } else {
         untracked(() => {
@@ -98,7 +98,7 @@ export class ChessPieceComponent implements GameObject {
           this.object3D!.rotateX(-Math.PI / 2)
           this.object3D!.scale.setScalar(1)
           this.targetPosition.z -= 1;
-          this.stateChangedAt = this.lastAnimationFrameAt;
+          this.stateChangedAt = 0;
         })
       }
     })
